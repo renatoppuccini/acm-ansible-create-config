@@ -1,0 +1,30 @@
+---
+- name: Create OpenShift namespace
+  hosts: localhost
+  gather_facts: no
+
+  vars:
+    oc_username: my-oc-username
+    oc_password: my-oc-password
+    oc_server: https://my-oc-server.com:6443
+    namespace_name: my-namespace
+
+  tasks:
+    - name: Login to OpenShift
+      openshift_login:
+        server_url: "{{ oc_server }}"
+        username: "{{ oc_username }}"
+        password: "{{ oc_password }}"
+        insecure_skip_tls_verify: true
+        debug: true
+
+    - name: Create namespace
+      openshift_project:
+        state: present
+        namespace: "{{ namespace_name }}"
+        display_name: "{{ namespace_name }}"
+        description: "Namespace for my project"
+        annotations:
+          owner: "John Doe"
+      delegate_to: localhost
+
